@@ -12,3 +12,53 @@
   <div class="mos-point-icon" data-boxtype="2"></div>
   <div></div>
 </div>
+
+<style>
+  #mos-point-overlay {
+    background-color: white;
+    position: absolute;
+    z-index: 10;
+    pointer-events: none;
+    display: grid;
+    place-items: center;
+  }
+
+  .mos-point-icon {
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: blue;
+    text-align: center;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+  }
+</style>
+<script>
+  $().ready(function(){
+    const $layer = $('#mos-point-overlay')
+    $(document).on('mouseenter', '.mos-point-icon', function(){
+      const boxtype = $(this).data('boxtype')
+      const point = $(this).data('point')
+
+      const $row = boxtype === 1 ? $(this).closest('tr') : $(this).closest('.top-box')
+      const offset = $row.offset()
+      const width = $row.outerWidth()
+      const height = $row.outerHeight()
+
+      $('.mos-point').text(point || 0)
+      $layer.css({
+        top: offset.top,
+        left: offset.left,
+        width: width,
+        height: height,
+        display: 'grid'
+      })
+    }).on('mouseout', '.mos-point-icon', function(){
+      $('.mos-point').text(0)
+      $('#mos-point-overlay').hide()
+    })
+  })
+</script>
