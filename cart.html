@@ -1,0 +1,61 @@
+<table>
+  <tr>
+    <td><span>포인트적용<input type="checkbox" value="1" class="mos-point-apply" data-cash="8000" data-quantity="2" data-orderid="102"></span></td>
+    <td>mos1</td>
+    <td><span class="mos-quantity">2</span></td>
+    <td>8,000</td>
+  </tr>
+  <tr>
+    <td><span>포인트적용<input type="checkbox" value="1" class="mos-point-apply" data-cash="4000" data-quantity="2" data-orderid="122"></span></td>
+    <td>mos2</td>
+    <td><span class="mos-quantity">2</span></td>
+    <td>4,000</td>
+  </tr>
+</table>
+<input type="text" />
+<button type="button" onclick="submit()">확인</button>
+
+<script>
+  const totalPoint = {calc:11000}
+  const orderMinusPoint = {}
+  const checkedIsApplyPoint = () => {
+    $('.mos-point-apply').each(function, (i, v)=>{
+      const checkBox = $(v)
+      if(!checkBox.prop('checked')){
+        checkBox.parent().css('visibility', totalPoint.calc < checkBox.data('cash') ? 'hidden':'visible'
+      }
+    })
+  }
+  const submit = () => {
+    $('#hiddenValue').val(JSON.stringfy(orderMinusPoint))
+  }
+  $().ready(function(){
+    checkedIsApplyPoint()
+    $(document).on('change', '.mos-point-apply', function(){
+      const minApplyNumber = Math.floor(totalPoint.calc / $(this).data('cash'))
+      const applyNumber = Math.min($(this).data('quantity'),minApplyNumber)
+      if($(this).prop('checked') && totalPoint.calc >= $(this).data('cash')){
+        orderMinusPoint[$(this).val()] = {
+          point: $(this).data('cash'),
+          applyNumber,
+          quantity: $(this).data('quantity'),
+          orderid: $(this).data('orderid')
+        }
+        totalPoint.calc -= $(this).data('cash') * applyNumber
+        if(minApplyNumber < $(this).data('quantity')){
+          const copyElement = $(this).closest('tr').clone()
+          $(this).closest('tr').find('.mos-quantity').text($(this).data('quantity') - minApplyNumber)
+          copyElement.find('.mos-quantity').text(minApplyNumber)
+          $(this).closest('tr').after(`<tr calss='row temp-copy'>${copyElement.html()}</tr>`)
+        }
+      }else{
+        totalPoint.calc += orderMinusPoint[$(this).val()].point * orderMinusPoint[$(this).val()].applyNumber
+        if($(this).closest('tr').next().prop('className').indexOf('temp-copy') !== -1){
+          $(this).closest('tr').next().remove()
+        }
+        delete orderMinusPoint[$(this).val()]
+      }
+      checkedIsApplyPoint()
+    })
+  })
+</script>
