@@ -55,7 +55,8 @@
       }else{
         totalPoint.calc += orderMinusPoint[$(this).val()].point * orderMinusPoint[$(this).val()].applyNumber;
         if($(this).closest('tr').next().prop('className')?.indexOf('temp-copy') !== -1){
-          $(this).closest('tr').next().remove()
+          $(this).closest('tr').find('.mos-quantity').text(orderMinusPoint[$(this).val()].quantity)
+	$(this).closest('tr').next().remove()
         }
         delete orderMinusPoint[$(this).val()]
       }
